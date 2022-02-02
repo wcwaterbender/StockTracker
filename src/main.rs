@@ -4,6 +4,7 @@ use chrono::prelude::*;
 use std::error::Error;
 use std::env;
 use std::io::prelude::*;
+use std::thread;
 extern crate tokio_test;
 
 
@@ -30,8 +31,13 @@ fn get_stock_info() -> Result<(), Box<dyn Error>> {
 }
 
 fn main(){
-    let result = get_stock_info();
-    if let Err(err) = result {
-        let _ = writeln!(std::io::stderr(), "Error: {}", err);
+    let interval = std::time::Duration::from_millis(1000);
+    loop {
+        let result = get_stock_info();
+        if let Err(err) = result {
+            let _ = writeln!(std::io::stderr(), "Error: {}", err);
+            return;
+        }
+        thread::sleep(interval);
     }
 }
